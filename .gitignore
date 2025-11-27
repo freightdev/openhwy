@@ -1,6 +1,7 @@
 # Custom
 content-mapping/
 target/
+crates/
 
 # General
 .DS_Store
