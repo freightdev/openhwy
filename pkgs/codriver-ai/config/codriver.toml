@@ -1,0 +1,324 @@
+# CoDriver Configuration
+# This is how CoDriver knows what to do when idle
+
+[codriver]
+name = "CoDriver"
+version = "0.1.0"
+brain_node = "hostbox"           # Which Ollama node for decision-making
+brain_model = "qwen2.5:14b"      # Which model for CoDriver's brain
+idle_check_interval_ms = 500     # How often to check for work (milliseconds)
+
+[database]
+primary = "surrealdb"            # Main database
+analytics = "duckdb"             # For data analysis
+surreal_endpoint = "127.0.0.1:8000"
+duckdb_path = ".ai/data/analytics.duckdb"
+
+[cluster]
+# Ollama cluster nodes
+[cluster.l1]
+name = "workbox"
+hostname = "workbox"
+ip = "192.168.12.136"
+specialization = "vision_sql"
+models = ["llava-llama3:8b", "llava-phi3:3.8b", "duckdb-nsql:7b", "shieldgemma:9b"]
+
+[cluster.l2]
+name = "hostbox"
+hostname = "hostbox"
+ip = "192.168.12.106"
+specialization = "reasoning"
+models = ["qwen2.5:14b", "nexusraven:13b", "gemma3:12b", "granite4:1b"]
+
+[cluster.l3]
+name = "helpbox"
+hostname = "helpbox"
+ip = "192.168.12.66"
+specialization = "code_generation"
+models = ["codestral:22b", "deepseek-coder-v2:16b", "deepcoder:14b", "codellama:13b"]
+
+[cluster.l4]
+name = "callbox"
+hostname = "callbox"
+ip = "192.168.12.9"
+specialization = "quick_tasks"
+models = ["phi4-mini:3.8b", "nuextract:3.8b", "smallthinker:3b"]
+
+# ============================================================================
+# LEAD GENERATION - Find paid development work
+# ============================================================================
+
+[leads]
+enabled = true
+search_interval_minutes = 60     # How often to search for leads
+min_score = 70                   # Minimum score to qualify (0-100)
+min_budget = 1000                # Minimum budget in USD
+max_concurrent_searches = 5      # Don't hammer APIs
+
+# Where to save leads
+output_dir = ".ai/leads"
+qualified_dir = ".ai/leads/qualified"
+research_dir = ".ai/leads/research"
+archive_dir = ".ai/leads/archive"
+
+# Lead sources (FREE ONLY - no paid accounts needed)
+[leads.sources]
+# Social media (free to scrape)
+twitter = true                   # Search #freelance #hiring #remotework
+linkedin = true                  # Job posts visible without premium
+reddit = true                    # r/forhire, r/freelance_forhire, r/hiring
+facebook_groups = false          # Requires login, skip for now
+discord = false                  # Requires join, skip for now
+
+# Public job boards (free to search)
+indeed = true                    # No account needed to search
+google_jobs = true               # Aggregator, free
+remote_ok = true                 # Free job board
+weworkremotely = true            # Free to view listings
+hackernews_hiring = true         # Monthly "Who's Hiring" threads
+
+# Developer communities (free)
+devto = true                     # dev.to job posts
+hashnode = false                 # Smaller audience
+indiehackers = true              # Forum jobs section
+
+# Direct scraping (free)
+company_career_pages = true      # Scrape trucking company websites
+google_maps_businesses = true    # Find businesses, check for "careers"
+industry_directories = true      # Public directories
+
+# ============================================================================
+# LEAD SEARCH QUERIES - What kind of work to find
+# ============================================================================
+
+[[leads.queries]]
+category = "web_development"
+keywords = [
+    "react developer needed",
+    "next.js website",
+    "typescript full stack",
+    "web application development",
+    "SaaS platform development"
+]
+budget_range = [1000, 10000]
+priority = "high"
+
+[[leads.queries]]
+category = "mobile_development"
+keywords = [
+    "react native app",
+    "mobile app development",
+    "iOS android developer",
+    "cross-platform mobile"
+]
+budget_range = [1500, 15000]
+priority = "high"
+
+[[leads.queries]]
+category = "backend_api"
+keywords = [
+    "REST API development",
+    "GraphQL API",
+    "backend developer",
+    "microservices architecture",
+    "Node.js API",
+    "Go backend developer"
+]
+budget_range = [1000, 8000]
+priority = "medium"
+
+[[leads.queries]]
+category = "automation"
+keywords = [
+    "web scraping",
+    "automation script",
+    "data extraction",
+    "workflow automation",
+    "Python automation"
+]
+budget_range = [500, 5000]
+priority = "medium"
+
+[[leads.queries]]
+category = "ai_ml"
+keywords = [
+    "AI integration",
+    "chatbot development",
+    "machine learning",
+    "LLM integration",
+    "RAG system"
+]
+budget_range = [2000, 20000]
+priority = "high"
+
+[[leads.queries]]
+category = "quick_gigs"
+keywords = [
+    "landing page",
+    "simple website",
+    "portfolio website",
+    "bug fix",
+    "small feature"
+]
+budget_range = [300, 2000]
+priority = "low"
+
+# ============================================================================
+# TRUCKING SPECIFIC LEADS (FED TMS opportunities)
+# ============================================================================
+
+[[leads.queries]]
+category = "trucking_tms"
+keywords = [
+    "trucking company needs TMS",
+    "fleet management software",
+    "dispatch software",
+    "transportation management system",
+    "logistics software development"
+]
+budget_range = [5000, 100000]
+priority = "highest"                # FED is the goal
+
+[[leads.queries]]
+category = "trucking_tools"
+keywords = [
+    "load board integration",
+    "ELD integration",
+    "driver app",
+    "dispatcher tools",
+    "trucking automation"
+]
+budget_range = [2000, 20000]
+priority = "high"
+
+# ============================================================================
+# LEAD QUALIFICATION CRITERIA
+# ============================================================================
+
+[leads.qualification]
+# Score factors (0-100 points total)
+budget_weight = 30               # Higher budget = higher score
+description_quality_weight = 20  # Detailed description = serious client
+client_history_weight = 20       # Repeat client = reliable
+tech_stack_match_weight = 15     # Our stack = easier/faster
+timeline_weight = 10             # Reasonable timeline
+response_rate_weight = 5         # Client responds fast
+
+# Our tech stack (score higher if client wants these)
+preferred_tech = [
+    "React", "Next.js", "TypeScript",
+    "Node.js", "Go", "Rust",
+    "PostgreSQL", "MongoDB", "SurrealDB",
+    "Docker", "AWS", "Vercel",
+    "Tailwind CSS", "Shadcn UI"
+]
+
+# Red flags (reduce score)
+red_flags = [
+    "work for free",
+    "exposure",
+    "profit sharing only",
+    "no budget",
+    "spec work",
+    "unrealistic timeline"
+]
+
+# ============================================================================
+# CODE GENERATION SETTINGS
+# ============================================================================
+
+[code_generation]
+default_node = "helpbox"         # L3 (GPU code generation)
+default_model = "codestral:22b"
+fallback_model = "deepseek-coder-v2:16b"
+
+# What CoDriver can build
+capabilities = [
+    "react_components",
+    "nextjs_pages",
+    "api_endpoints",
+    "database_schemas",
+    "typescript_types",
+    "tailwind_styles",
+    "ui_libraries",
+    "backend_services",
+    "automation_scripts"
+]
+
+# Output directories
+output_base = ".ai/projects"
+in_progress = ".ai/projects/in-progress"
+complete = ".ai/projects/complete"
+templates = ".ai/projects/templates"
+
+# ============================================================================
+# COMMUNICATION SETTINGS
+# ============================================================================
+
+[communication]
+chat_dir = ".ai/chats"
+user_chat = ".ai/chats/codriver.txt"
+claude_log = ".ai/chats/claude.txt"
+gemini_log = ".ai/chats/gemini.txt"
+openai_log = ".ai/chats/openai.txt"
+
+# Fast inter-agent communication (MessagePack)
+messagepack_enabled = true
+messagepack_port = 7878
+
+# ============================================================================
+# AUDIT & LOGGING
+# ============================================================================
+
+[audit]
+enabled = true
+log_dir = ".ai/logs"
+log_level = "info"               # debug, info, warn, error
+log_tasks = true
+log_decisions = true
+log_generations = true
+log_leads = true
+
+# ============================================================================
+# AUTONOMOUS BEHAVIOR
+# ============================================================================
+
+[autonomous]
+# When idle (no user tasks), what should CoDriver do?
+idle_activities = [
+    "find_leads",                # Search for paid work
+    "health_check",              # Check cluster health
+    "optimize_prompts",          # Improve prompt templates
+    "analyze_metrics"            # Review performance
+]
+
+# How aggressive should lead generation be?
+lead_search_aggressiveness = "moderate"  # conservative, moderate, aggressive
+
+# Should CoDriver apply to jobs automatically?
+auto_apply = false               # For now, just find and qualify
+notify_on_qualified_lead = true  # Alert user
+
+# ============================================================================
+# SAFETY & LIMITS
+# ============================================================================
+
+[safety]
+max_cost_per_task_usd = 0        # Zero cost (local Ollama only)
+require_approval_for_spending = true
+sandbox_code_execution = true
+verify_before_deploy = true
+
+# Rate limiting (be nice to APIs)
+max_requests_per_minute = 30
+max_concurrent_tasks = 5
+
+# ============================================================================
+# EXPERIMENTAL FEATURES
+# ============================================================================
+
+[experimental]
+vision_analysis = true           # Use L1 for image processing
+pdf_processing = true            # Extract from PDFs
+web_automation = false           # Selenium (not ready yet)
+voice_interface = false          # Future

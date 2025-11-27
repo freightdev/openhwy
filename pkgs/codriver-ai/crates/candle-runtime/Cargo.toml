@@ -1,0 +1,100 @@
+[package]
+name = "cuda_candle"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+candle-core = { version = "0.9.2-alpha.1", path = "./candle/candle-core", features = ["cuda", "cudnn"] }
+candle-flash-attn = { version = "0.9.2-alpha.1", path = "./candle/candle-flash-attn", optional = true }
+candle-nn = { version = "0.9.2-alpha.1", path = "./candle/candle-nn", features = ["cuda", "cudnn"] }
+candle-transformers = { path = "./candle/candle-transformers" }
+tokenizers = "0.15"
+
+[features]
+flash-attn = ["candle-flash-attn"]
+default = []
+
+# Testing Suites
+[[bin]]
+name = "cuda_test"
+path = "src/main.rs"
+
+[[bin]]
+name = "test_burn_integration"
+path = "src/bin/test_burn_integration.rs"
+
+[[bin]]
+name = "test_checkpointing"
+path = "src/bin/test_checkpointing.rs"
+
+[[bin]]
+name = "test_data_pipeline"
+path = "src/bin/test_data_pipeline.rs"
+
+[[bin]]
+name = "test_fa2"
+path = "src/bin/test_fa2.rs"
+
+[[bin]]
+name = "test_gradients"
+path = "src/bin/test_gradients.rs"
+
+[[bin]]
+name = "test_inference"
+path = "src/bin/test_inference.rs"
+
+[[bin]]
+name = "test_lib_check"
+path = "src/bin/test_lib_check.rs"
+
+[[bin]]
+name = "test_lora"
+path = "src/bin/test_lora.rs"
+
+[[bin]]
+name = "test_matmul"
+path = "src/bin/test_matmul.rs"
+
+[[bin]]
+name = "test_memory_stress"
+path = "src/bin/test_memory_stress.rs"
+
+[[bin]]
+name = "test_mixed_precision"
+path = "src/bin/test_mixed_precision.rs"
+
+[[bin]]
+name = "test_optimizers"
+path = "src/bin/test_optimizers.rs"
+
+[[bin]]
+name = "test_quantization"
+path = "src/bin/test_quantization.rs"
+
+[[bin]]
+name = "test_thermal"
+path = "src/bin/test_thermal.rs"
+
+[[bin]]
+name = "test_throughput"
+path = "src/bin/test_throughput.rs"
+
+[[bin]]
+name = "test_training_loop"
+path = "src/bin/test_training_loop.rs"
+
+[[bin]]
+name = "test_training_ops"
+path = "src/bin/test_training_ops.rs"
+
+[[bin]]
+name = "test_transformer_ops"
+path = "src/bin/test_transformer_ops.rs"
+
+[[bin]]
+name = "test_vram"
+path = "src/bin/test_vram.rs"
+
+[[bin]]
+name = "test_workload"
+path = "src/bin/test_workload.rs"
